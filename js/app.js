@@ -8,9 +8,6 @@ var Enemy = function() {
     this.sprite = 'images/enemy-bug.png';
     this.x = Math.random()-80
     this.y = Math.floor(Math.random() * (180) + 55)
-    this.speed = Math.random()
-    /// good this.y = Math.floor(Math.random() * Math.ceil(230))
-
 };
 
 // Update the enemy's position, required method for game
@@ -19,13 +16,12 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    this.x += Math.floor(Math.random() * 10)
-    if (this.x > 500){
-        this.x = Math.floor(Math.random()-80)
-    }
+    // randomly change the speed
+    this.x += Math.floor(Math.random() * 8);
 
-    if (this.x == player.row) {
-        player.col = 400;
+    if(this.x > 500) {
+        this.x = Math.floor(Math.random()-80);
+        this.y = Math.floor(Math.random() * (180) + 55);
     }
 };
 
@@ -38,44 +34,37 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-        this.sprite = 'images/char-boy.png';
-        this.row = 200;
-        this.col = 400;
-    };
+    this.sprite = 'images/char-boy.png';
+    this.x = 200;
+    this.y = 400;
+};
 
 Player.prototype.update = function() {
-        if (player.col < -18 || player.col > 400 ) {
-            player.col = 400;
-        }
-
-        if (player.row > 420){
-            player.row = 420;
-        }
-
-        if (player.row < -16) {
-            player.row = -16;
-        }
-    };
+    if(player.y > 400 ) {
+        player.y = 400;
+    } else if(player.x > 420) {
+        player.x = 420;
+    } else if(player.x < -16) {
+        player.x = -16;
+    }
+};
 
 Player.prototype.render = function() {
-        ctx.drawImage(Resources.get(this.sprite), this.row, this.col);
-    };
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
 
 Player.prototype.handleInput = function(keyPressed) {
-        if (keyPressed == 'left') {
-            this.row -= 20;
-        }
-        if (keyPressed == 'right') {
-            this.row += 20;
-        }
-        if (keyPressed == 'up') {
-            this.col -= 20;
-        }
+    if(keyPressed == 'left') {
+        this.x -= 20;
+    } else if(keyPressed == 'right') {
+        this.x += 20;
+    } else if(keyPressed == 'up') {
+        this.y -= 20;
+    } else if(keyPressed == 'down') {
+        this.y += 20;
+    }
+};
 
-        if (keyPressed == 'down') {
-            this.col += 20;
-        }
-    };
 
 
 
@@ -85,16 +74,16 @@ Player.prototype.handleInput = function(keyPressed) {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-const enemy1 = new Enemy()
-const enemy2 = new Enemy()
-const enemy3 = new Enemy()
-const enemy4 = new Enemy()
-const enemy5 = new Enemy()
-const enemy6 = new Enemy()
-const enemy7 = new Enemy()
-const enemy8 = new Enemy()
-const allEnemies = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6]
-const player = new Player()
+const enemy1 = new Enemy();
+const enemy2 = new Enemy();
+const enemy3 = new Enemy();
+const enemy4 = new Enemy();
+const enemy5 = new Enemy();
+const enemy6 = new Enemy();
+const enemy7 = new Enemy();
+const enemy8 = new Enemy();
+const allEnemies = [enemy1, enemy2, enemy3, enemy4, enemy5]
+const player = new Player();
 
 
 
@@ -107,6 +96,13 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down'
     };
-
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+/*function showModal() {
+    const modal = document.getElementById('myModal');
+    if (player.y < -18) {
+        modal.style.display = "block";
+    }
+}*/
+

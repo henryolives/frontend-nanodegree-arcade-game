@@ -23,7 +23,7 @@ var Engine = (function(global) {
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime;
-
+    const modal = document.getElementById('myModal');
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
@@ -46,7 +46,7 @@ var Engine = (function(global) {
          */
         update(dt);
         render();
-
+        
         /* Set our lastTime variable which is used to determine the time delta
          * for the next time this function is called.
          */
@@ -79,7 +79,8 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
+        showModal()
     }
 
     /* This is called by the update function and loops through all of the
@@ -89,6 +90,25 @@ var Engine = (function(global) {
      * the data/properties related to the object. Do your drawing in your
      * render methods.
      */
+    function checkCollisions() {
+        allEnemies.forEach(function(enemy) {
+            if (Math.abs(player.x - enemy.x) < 61 && Math.abs(player.y - enemy.y) < 55 ) {
+               player.y = 400; 
+            }
+        });
+    }
+
+    //this will display a modal if the game is won
+    function showModal() {
+        if (player.y < 10) {
+            modal.style.display = "block";
+            player.y = 0
+            allEnemies.forEach(function(enemy) {
+                enemy.x = Math.floor(Math.random() + 100);
+            })
+        }
+    }
+
     function updateEntities(dt) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
@@ -162,9 +182,7 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        if (player.col < 10){
-            player.col = 400;
-        }
+
     }
 
     /* Go ahead and load all of the images we know we're going to need to
