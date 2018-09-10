@@ -6,13 +6,17 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-	<div id="myModal" class="modal">
-  		<div class="modal-content">
-  			<p>Congratulations!!!!</p>
-  			<p>You won!</p>
-    		<button class="button" onclick="window.location.reload()">Play again</button>
-  		</div>
-	</div>
+	<section >
+		<span>Total Scores</span> : <span id="score-panel">0</span>
+	</section>
+	<section id="myModal" class="modal">
+		<section class="modal-content">
+			<!-- <p>Please select a player</p> -->
+  		<p>Congratulations!!!!</p>
+  		<button class="button" id="btn" ">Next Level</button>
+  		<button class="button" onclick="window.location.reload()">Start A New Game</button>
+	</section>
+</section>
     <script src="js/resources.js"></script>
     <script src="js/app.js"></script>
     <script src="js/engine.js"></script>

@@ -22,11 +22,14 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime;
-    const modal = document.getElementById('myModal');
+        lastTime,
+        modal = doc.getElementById('myModal'),
+        btn = doc.getElementById('btn')
+        score = doc.getElementById('score-panel');
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
+    var startGame
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -40,11 +43,11 @@ var Engine = (function(global) {
          */
         var now = Date.now(),
             dt = (now - lastTime) / 1000.0;
-
+         
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
          */
-        update(dt);
+        update(dt, startGame);
         render();
         
         /* Set our lastTime variable which is used to determine the time delta
@@ -77,10 +80,11 @@ var Engine = (function(global) {
      * functionality this way (you could just implement collision detection
      * on the entities themselves within your app.js file).
      */
-    function update(dt) {
-        updateEntities(dt);
+    function update(dt, startGame) {
+        updateEntities(dt, startGame);
         checkCollisions();
         showModal()
+
     }
 
     /* This is called by the update function and loops through all of the
@@ -94,26 +98,40 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             if (Math.abs(player.x - enemy.x) < 61 && Math.abs(player.y - enemy.y) < 55 ) {
                player.y = 400; 
+               score.textContent -= 15;
+            }
+        });
+        collectibles.forEach(function(collectible) {
+            if (Math.abs(player.x - collectible.x) < 61 && Math.abs(player.y - collectible.y) < 55 ) {
+               collectible.x = -85; 
+               score.textContent = Number(score.textContent) + 10;
             }
         });
     }
 
     //this will display a modal if the game is won
     function showModal() {
-        if (player.y < 10) {
+        if (player.y < 10 && modal.style.display != "block") {
             modal.style.display = "block";
-            player.y = 0
-            allEnemies.forEach(function(enemy) {
-                enemy.x = Math.floor(Math.random() + 100);
-            })
+            score.textContent = Number(score.textContent) + 20;
+            player.y = -16; 
+            startGame = false;
+        }
+        btn.onclick = function() {
+        modal.style.display = "none";
+        player.y = 400; 
+        startGame = true;
         }
     }
 
-    function updateEntities(dt) {
+    function updateEntities(dt, startGame) {
         allEnemies.forEach(function(enemy) {
-            enemy.update(dt);
+            enemy.update(dt, startGame);
         });
         player.update();
+        collectibles.forEach(function(collectible) {
+            collectible.update(dt, startGame);
+        });
     }
 
     /* This function initially draws the "game level", it will then call
@@ -133,7 +151,7 @@ var Engine = (function(global) {
                 'images/stone-block.png',   // Row 3 of 3 of stone
                 'images/grass-block.png',   // Row 1 of 2 of grass
                 'images/grass-block.png',   // Row 2 of 2 of grass
-                //
+
             ],
             numRows = 6,
             numCols = 5,
@@ -173,8 +191,10 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
-
         player.render();
+        collectibles.forEach(function(collectible) {
+            collectible.render();
+        });
     }
 
     /* This function does nothing but it could have been a good place to
@@ -182,7 +202,20 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
+        startGame = true;
+  /*      var players = [
+            'images/char-boy.png',
+            'images/char-princess-girl.png',
+            'images/char-pink-girl.png',
+            'images/char-cat-girl.png'
+            ],
+            selectedPlayer,
+            row;
 
+            for (row = 0; row < 4; row++) {
+                modal.appendChild(document.createElement('img')).src=players[row];
+            }*/
+        //modal.style.display = "block"
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -194,11 +227,14 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png',
         'images/char-princess-girl.png',
         'images/char-boy.png',
         'images/char-pink-girl.png',
-        'images/char-cat-girl.png'
+        'images/char-cat-girl.png',
+        'images/Gem Blue.png',
+        'images/Gem Green.png',
+        'images/Gem Orange.png',
+        'images/Star.png'
     ]);
     Resources.onReady(init);
 

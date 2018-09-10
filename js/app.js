@@ -1,91 +1,127 @@
-// Enemies our player must avoid
-var Enemy = function() {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
-
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bug.png';
-    this.x = Math.random()-80
-    this.y = Math.floor(Math.random() * (180) + 55)
-};
-
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
-Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
-    // randomly change the speed
-    this.x += Math.floor(Math.random() * 8);
-
-    if(this.x > 500) {
-        this.x = Math.floor(Math.random()-80);
-        this.y = Math.floor(Math.random() * (180) + 55);
+'use strict';
+// this is the super class from which the enemy and player classes inherit
+class Entities {
+    constructor(sprite, x, y) {
+        this.sprite = sprite;
+        this.x = x;
+        this.y = y;
     }
-};
-
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
-var Player = function() {
-    this.sprite = 'images/char-boy.png';
-    this.x = 200;
-    this.y = 400;
-};
-
-Player.prototype.update = function() {
-    if(player.y > 400 ) {
-        player.y = 400;
-    } else if(player.x > 420) {
-        player.x = 420;
-    } else if(player.x < -16) {
-        player.x = -16;
+    render() {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
     }
-};
+}
 
-Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
-Player.prototype.handleInput = function(keyPressed) {
-    if(keyPressed == 'left') {
-        this.x -= 20;
-    } else if(keyPressed == 'right') {
-        this.x += 20;
-    } else if(keyPressed == 'up') {
-        this.y -= 20;
-    } else if(keyPressed == 'down') {
-        this.y += 20;
+// Enemy class inherits from entities and add its perculiar methods and properties
+class Enemy extends Entities {
+    constructor(sprite, x, y) {
+        super(sprite, x, y);
+        this.speed = Math.floor(Math.random() * 555);
     }
-};
+    update(dt, startGame) {
+        // randomly change the speed
+        if(startGame) {
+            this.x += this.speed * dt;
+            if(this.x > 500) {
+                this.x = Math.floor(Math.random()-80);
+                this.y = Math.floor(Math.random() * (180) + 55);
+            }
+        } 
+    };
+}
 
+// Player class inherits from entities and add its perculiar methods and properties
+class Player extends Entities {
+    constructor(sprite, x, y) {
+        super(sprite, x, y);
+    }
+    update() {
+        if(this.y > 400 ) {
+            this.y = 400;
+        } else if(this.x > 420) {
+            this.x = 420;
+        } else if(this.x < -16) {
+            this.x = -16;
+        } else if(this.y < 10) {
+            this.y = -5;
+            this.x = 200;
+        }
+    };
 
+    handleInput(keyPressed, startGame) {
+        if(keyPressed == 'left') {
+            this.x -= 70;
+        } else if(keyPressed == 'right') {
+            this.x += 85;
+        } else if(keyPressed == 'up' && this.y > -16) {
+            this.y -= 85;
+        } else if(keyPressed == 'down' && this.y > 0) {
+            this.y += 70;
+        }
+    };
+}
 
-
-
-
+// Collectibles class inherits from Enemy
+class Collectibles extends Enemy {
+    constructor(sprite, x, y) {
+        super(sprite, x, y);
+    }
+}
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-const enemy1 = new Enemy();
-const enemy2 = new Enemy();
-const enemy3 = new Enemy();
-const enemy4 = new Enemy();
-const enemy5 = new Enemy();
-const enemy6 = new Enemy();
-const enemy7 = new Enemy();
-const enemy8 = new Enemy();
-const allEnemies = [enemy1, enemy2, enemy3, enemy4, enemy5]
-const player = new Player();
+// Place all player objects in an array called allPlayers
+//Place all collectible objects in an array called collectibles
 
+let allEnemies = [],
+    allPlayers = [],
+    collectibles = [],
+    player,
+    collectible,
+    collectiblesItems,
+    selectedPlayer;
+    //availblePlayers;
 
+collectiblesItems = [
+                'images/Gem Blue.png',
+                'images/Gem Green.png',
+                'images/Gem Orange.png',
+                'images/Star.png'
+                ]
+
+for(collectible of collectiblesItems) {
+    collectibles.push(new Collectibles(collectible, Math.random()-80, Math.floor(Math.random() * (180) + 55)));
+}
+
+for(let i = 0; i < 5; i++) {
+    allEnemies.push(new Enemy('images/enemy-bug.png', Math.random()-80, Math.floor(Math.random() * (180) + 55)));
+}
+
+//get the players displayed on the modal
+//availblePlayers = document.getElementById('myModal').childNodes;
+const players = [
+            'images/char-boy.png',
+            'images/char-princess-girl.png',
+            'images/char-pink-girl.png',
+            'images/char-cat-girl.png'
+            ];
+
+for(player of players) {
+    allPlayers.push(new Player(player, 200, 400));
+}
+
+selectedPlayer = 2;
+//listen for click event on any of the players selected 
+//and set the player object accordingly
+
+/*for(let x = 2; x < availblePlayers.length; x++) {
+availblePlayers[x].addEventListener("click", function() {
+            selection = indexOf(availblePlayers[x]);
+            alert(selection)
+    });
+}  
+*/
+
+player = allPlayers[selectedPlayer];
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
@@ -99,10 +135,4 @@ document.addEventListener('keyup', function(e) {
     player.handleInput(allowedKeys[e.keyCode]);
 });
 
-/*function showModal() {
-    const modal = document.getElementById('myModal');
-    if (player.y < -18) {
-        modal.style.display = "block";
-    }
-}*/
 
