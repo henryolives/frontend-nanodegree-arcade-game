@@ -123,6 +123,75 @@ availblePlayers[x].addEventListener("click", function() {
 
 player = allPlayers[selectedPlayer];
 
+
+//touch keyup events
+// Swipe Up / Down / Left / Right
+var initialX = null;
+var initialY = null;
+
+function startTouch(e) {
+    initialX = e.touches[0].clientX;
+    initialY = e.touches[0].clientY;
+};
+
+function moveTouch(e) {
+
+    if (initialX === null) {
+        return;
+    }
+
+    if (initialY === null) {
+        return;
+    }
+
+    var currentX = e.touches[0].clientX;
+    var currentY = e.touches[0].clientY;
+
+    var diffX = initialX - currentX;
+    var diffY = initialY - currentY;
+
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+        // sliding horizontally
+        if (diffX > 0 && player.x > 0) {
+            // swiped left
+            console.log("swiped left");
+            player.x -= 102;
+        } if (diffX < 0 && player.x < 405) {
+            // swiped right
+            console.log("swiped right");
+            player.x += 102;
+        }
+    } else {
+        // sliding vertically
+        if (diffY > 0 && player.y > 0) {
+            // swiped up
+            console.log("swiped up");
+            player.y -= 83;
+            if (player.y < 0) {
+                nextLevel();
+            }
+
+        } if (diffY < 0 && player.y < 405) {
+            // swiped down
+            console.log("swiped down");
+            player.y += 83;
+        }
+    }
+
+    initialX = null;
+    initialY = null;
+
+};
+
+
+
+
+
+//touch keyup events
+
+
+
+
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
