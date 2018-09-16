@@ -123,7 +123,8 @@ availblePlayers[x].addEventListener("click", function() {
 
 player = allPlayers[selectedPlayer];
 
-
+document.addEventListener("touchstart", startTouch, false);
+document.addEventListener("touchmove", moveTouch, false);
 //touch keyup events
 // Swipe Up / Down / Left / Right
 var initialX = null;
@@ -154,18 +155,18 @@ function moveTouch(e) {
         // sliding horizontally
         if (diffX > 0 && player.x > 0) {
             // swiped left
-            console.log("swiped left");
+            //console.log("swiped left");
             player.x -= 102;
         } if (diffX < 0 && player.x < 405) {
             // swiped right
-            console.log("swiped right");
+            //console.log("swiped right");
             player.x += 102;
         }
     } else {
         // sliding vertically
         if (diffY > 0 && player.y > 0) {
             // swiped up
-            console.log("swiped up");
+            //console.log("swiped up");
             player.y -= 83;
             if (player.y < 0) {
                 nextLevel();
@@ -173,7 +174,7 @@ function moveTouch(e) {
 
         } if (diffY < 0 && player.y < 405) {
             // swiped down
-            console.log("swiped down");
+            //console.log("swiped down");
             player.y += 83;
         }
     }
